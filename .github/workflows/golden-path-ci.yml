@@ -108,7 +108,9 @@ jobs:
         working-directory: infra/stacks/dev
         run: |
           set -euo pipefail
-          terraform init -backend=false
+          # Override the S3 backend with local for this credential-less plan job.
+          printf 'terraform {\n  backend "local" {}\n}\n' > override.tf
+          terraform init
           terraform plan \
             -var='vpc_id=vpc-mock' \
             -var='private_subnet_ids=["subnet-mock"]' \
