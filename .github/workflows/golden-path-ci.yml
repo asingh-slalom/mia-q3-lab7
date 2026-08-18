@@ -110,6 +110,7 @@ jobs:
           set -euo pipefail
           terraform init -backend=false
           terraform plan \
+            -backend=false \
             -var='vpc_id=vpc-mock' \
             -var='private_subnet_ids=["subnet-mock"]' \
             -var='public_subnet_ids=["subnet-mock"]' \
