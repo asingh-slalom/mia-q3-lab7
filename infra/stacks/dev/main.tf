@@ -71,6 +71,9 @@ module "todo_service" {
 
   # Container images — leave empty during Step 1 (ECR repos will be created
   # by the module; images are pushed in Step 3 by the build-and-push job).
+  vpc_id             = var.vpc_id
+  private_subnet_ids = var.private_subnet_ids
+  public_subnet_ids  = var.public_subnet_ids
   backend_image  = var.backend_image
   frontend_image = var.frontend_image
 
@@ -88,6 +91,25 @@ variable "aws_region" {
   description = "AWS region to deploy into"
   type        = string
   default     = "us-east-1"
+}
+
+variable "vpc_id" {
+  description = "ID of an existing VPC when networking is not managed by the module"
+  type        = string
+  default     = null
+  nullable    = true
+}
+
+variable "private_subnet_ids" {
+  description = "Private subnet IDs when networking is not managed by the module"
+  type        = list(string)
+  default     = []
+}
+
+variable "public_subnet_ids" {
+  description = "Public subnet IDs when networking is not managed by the module"
+  type        = list(string)
+  default     = []
 }
 
 variable "alb_ingress_cidr" {
