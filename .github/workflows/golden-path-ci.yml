@@ -170,7 +170,7 @@ jobs:
         run: sed -i '/skip_credentials_validation\|skip_metadata_api_check\|skip_region_validation\|skip_requesting_account_id/d' main.tf
       - name: Terraform init with S3 backend
         working-directory: infra/stacks/dev
-        run: terraform init -backend-config="key=todo-service/${{ github.repository_owner }}/dev/terraform.tfstate"
+        run: terraform init -reconfigure -backend-config="key=todo-service/${{ github.repository_owner }}/dev/terraform.tfstate"
       - name: Download Terraform plan artifact
         uses: actions/download-artifact@v4
         with:
