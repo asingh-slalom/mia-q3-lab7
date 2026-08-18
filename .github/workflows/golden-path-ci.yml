@@ -93,9 +93,15 @@ jobs:
     if: ${{ inputs.run_terraform_plan }}
     permissions:
       contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.aws_role_arn }}
+          aws-region: us-east-1
       - name: Install Terraform
         run: |
           set -euo pipefail
@@ -108,14 +114,8 @@ jobs:
         working-directory: infra/stacks/dev
         run: |
           set -euo pipefail
-          # Override the S3 backend with local for this credential-less plan job.
-          printf 'terraform {\n  backend "local" {}\n}\n' > override.tf
-          terraform init
-          terraform plan \
-            -var='vpc_id=vpc-mock' \
-            -var='private_subnet_ids=["subnet-mock"]' \
-            -var='public_subnet_ids=["subnet-mock"]' \
-            -out=tfplan
+          terraform init -backend-config="key=todo-service/${{ github.repository_owner }}/dev/terraform.tfstate"
+          terraform plan -out=tfplan
       - name: Terraform plan summary
         working-directory: infra/stacks/dev
         run: |
